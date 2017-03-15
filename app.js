@@ -56,12 +56,6 @@ const setBaseBody = (ctx, next) => {
   return next()
 }
 
-router.get('/cookies', 
-  setResTimeHeader,
-  setBaseBody,
-  saveNewUser
-)
-
 router.get('/create',
    setResTimeHeader,
    function (ctx, next) {
