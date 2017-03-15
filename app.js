@@ -3,7 +3,9 @@ const Router = require('koa-router')
 const co = require('co')
 
 const app = new Koa()
-const router = new Router()
+const router = new Router({
+  prefix: '/users'
+})
 
 const Mongorito = require('mongorito')
 const Model = Mongorito.Model
@@ -11,8 +13,6 @@ const Model = Mongorito.Model
 const User = Model.extend({
   collection: 'users'
 })
-
-Mongorito.connect('localhost/jobsUsers')
 
 const saveNewUser = co.wrap(function *(ctx) {
     Mongorito.connect('localhost/jobsUsers')
@@ -28,14 +28,17 @@ const saveNewUser = co.wrap(function *(ctx) {
       jobIds: jobIds 
     })
     yield record.save()
-    return ctx.body = "saved user"
+    yield Mongorito.disconnect()
+    return ctx.body = "User Saved"
 })
 
 
 const findAllUsers = co.wrap(function* (ctx) {
-  console.log('tyler')
-  const users = yield User.all()
-  return ctx.body = 'Returned all users'
+  yield Mongorito.connect('localhost/jobsUsers')
+  let users = yield User.all()
+  ctx.body = 'Returned all users'
+  console.log(users)
+  yield Mongorito.disconnect()
 })
 
 const findTimeInSeconds = (startTime) => (new Date() - startTime) / 1000
@@ -59,7 +62,7 @@ router.get('/cookies',
   saveNewUser
 )
 
-router.get('users/create',
+router.get('/create',
    setResTimeHeader,
    function (ctx, next) {
      console.log('creating user')
@@ -68,7 +71,7 @@ router.get('users/create',
    saveNewUser
 )
 
-router.get('users',
+router.get('/find',
    setResTimeHeader,
    findAllUsers
 )
@@ -77,4 +80,4 @@ app
   .use(router.routes())
 
 
-app.listen(3000)
+app.listen(9001)
