@@ -1,3 +1,4 @@
 {
-  "plugins": ["transform-async-to-generator", "latest"]
+  "presets": ["latest"],
+  "plugins": ["transform-async-to-generator"]
 }
