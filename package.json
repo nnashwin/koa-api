@@ -4,6 +4,7 @@
   "description": "",
   "main": "app.js",
   "dependencies": {
+    "babel-polyfill": "^6.23.0",
     "babel-register": "^6.23.0",
     "co": "^4.6.0",
     "inferno": "^1.3.0-rc.10",
