@@ -1,7 +1,7 @@
 const Router = require('koa-router')
 const Mongorito = require('mongorito')
 const co = require('co')
-
+import { findTimeInSeconds } from './helpers'
 const Model = Mongorito.Model
 
 const User = Model.extend({
@@ -13,7 +13,6 @@ const router = new Router({
 })
 
 const saveNewUser = co.wrap(function *(ctx) {
-    Mongorito.connect('localhost/jobsUsers')
     const jobIds = []
 
     for (let i = 0; i < (Math.random() * 20); i++) {
@@ -26,20 +25,15 @@ const saveNewUser = co.wrap(function *(ctx) {
       jobIds: jobIds 
     })
     yield record.save()
-    yield Mongorito.disconnect()
     return ctx.body = "User Saved"
 })
 
 
 const findAllUsers = co.wrap(function* (ctx) {
-  yield Mongorito.connect('localhost/jobsUsers')
   let users = yield User.all()
   ctx.body = 'Returned all users'
   console.log(users)
-  yield Mongorito.disconnect()
 })
-
-const findTimeInSeconds = (startTime) => (new Date() - startTime) / 1000
 
 const setResTimeHeader = async (ctx, next) => {
   const start = new Date()
@@ -53,6 +47,8 @@ const setBaseBody = (ctx, next) => {
   ctx.body = "This is a default, change when you start to implement the front-end"
   return next()
 }
+
+Mongorito.connect('localhost/jobsUsers')
 
 router.get('/create',
    setResTimeHeader,
