@@ -12,24 +12,24 @@ const server = email.server.connect({
 
 const createEmail = (
   text = "this is your reminder email",
-  from = "fromUser",
-  to = "toUser",
+  from = "Remindbot <from_email@gmail.com>",
+  to = "toUser <insert_email_here@gmail.com>",
   subject = "default reminder"
 ) => ({
   text,
   from,
   to,
-  subject
+  subject,
+  sendEmail () {
+    server.send({
+      text: text,
+      from: from,
+      to: to,
+      subject: subject
+    }, function (err, msg) { console.log(err || msg) })
+  }
 })
 
-const tylersEmail = createEmail()
-console.log(tylersEmail)
-
-// server.send({
-//   text: "test-email",
-//   from: "sunny <fake.email@gmail.com>",
-//   to: "rulai <fake.email.2@gmail.com",
-//   subject: "testing emailjs"
-// }, function (err, msg) {console.log(err || msg)})
-
-
+module.exports = {
+  createEmail: createEmail
+}
