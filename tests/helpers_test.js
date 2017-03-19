@@ -3,7 +3,7 @@ require('babel-polyfill')
 const bcrypt = require('bcrypt')
 
 import { findTimeInSeconds } from '../helpers.js'
-import { convertToHash,  convertToPass } from '../helpers.js'
+import { convertToHashPromise,  convertToPass } from '../helpers.js'
 import test from 'ava'
 
 test('findTimeInSeconds returns a number', t => {
@@ -16,7 +16,7 @@ test('findTimeInSeconds returns a number', t => {
 test('convertToHash converts a plaintextPass to a bcrypt accurate hash', async t => {
   const saltRounds = 10
   const pass = "cookies"
-  let actualHash = await convertToHash(pass, saltRounds)
+  let actualHash = await convertToHashPromise(pass, saltRounds)
   bcrypt.compare(pass, actualHash, (err, res) => {
     console.log(res)
     if (res === false) {
