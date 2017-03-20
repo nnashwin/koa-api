@@ -12,25 +12,37 @@ const router = new Router({
   prefix: '/users'
 })
 
+const rejectNonAppJsonReq = (ctx, next) => {
+  ctx.is('application/json') === 'application/json' ? next() : ctx.response.status = 400
+  return ctx.response.status = 200
+}
 
-const saveNewUser = async function (ctx) {
+
+const saveNewUser = async function (ctx, next) {
     let bodyObj = ctx.request.body 
 
     if (typeof bodyObj.username !== 'string' || typeof bodyObj.password !== 'string' || typeof bodyObj.jobIds !== 'object') {
       return ctx.response.status = 400
     }
 
-    let hash = await convertToHashPromise(bodyObj.password)
+    try {
+      var hash = await convertToHashPromise(bodyObj.password)
+    } catch (e) {
+      console.log(e)
+    }
+    
 
     var record = new User({
       username: bodyObj.username,
       password: hash,
-      jobIds: bodyObj 
+      jobIds: bodyObj.jobIds 
     })
 
-    await record.save();
-    ctx.response.status = 200
-    return ctx.body = "User Saved"
+    try {
+      await record.save();
+    } catch (e) {
+      console.log(e)
+    }
 }
 
 
@@ -64,10 +76,8 @@ router.get('/create',
 
 router.post('/create', 
   setResTimeHeader,
-  saveNewUser,
-  (ctx) => {
-    ctx.response.status = 200
-  }
+  rejectNonAppJsonReq,
+  saveNewUser
 )
 
 router.get('/find',
