@@ -1,7 +1,7 @@
 const Router = require('koa-router')
 const Mongorito = require('mongorito')
-const co = require('co')
-import { findTimeInSeconds } from './helpers'
+const bodyParser = require('koa-bodyparser')
+import { findTimeInSeconds, convertToHashPromise } from './helpers'
 const Model = Mongorito.Model
 
 const User = Model.extend({
@@ -12,28 +12,32 @@ const router = new Router({
   prefix: '/users'
 })
 
-const saveNewUser = co.wrap(function *(ctx) {
+
+const saveNewUser = async function (ctx) {
+    console.log(ctx.request.body)
     const jobIds = []
 
     for (let i = 0; i < (Math.random() * 20); i++) {
       jobIds.push('jobId')
     }
 
+    let hash = await convertToHashPromise('cookies')
+
     var record = new User({
       username: `user${Math.random() * 100000}`,
       password: 'secret',
       jobIds: jobIds 
     })
-    yield record.save()
+    await record.save();
     return ctx.body = "User Saved"
-})
+}
 
 
-const findAllUsers = co.wrap(function* (ctx) {
-  let users = yield User.all()
-  ctx.body = 'Returned all users'
-  console.log(users)
-})
+const findAllUsers = async function (ctx) {
+  let users = await User.all()
+  //ctx.body = 'Returned all users'
+  return users
+}
 
 const setResTimeHeader = async (ctx, next) => {
   const start = new Date()
@@ -53,10 +57,18 @@ Mongorito.connect('localhost/jobsUsers')
 router.get('/create',
    setResTimeHeader,
    function (ctx, next) {
-     console.log('creating user')
      return next()
    },
    saveNewUser
+)
+
+router.post('/create', 
+  setResTimeHeader,
+  saveNewUser,
+  async function (ctx) {
+    console.log(ctx.request.body)
+    ctx.response.status = 200
+  }
 )
 
 router.get('/find',
