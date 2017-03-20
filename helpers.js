@@ -2,11 +2,15 @@ const bcrypt = require('bcrypt')
 
 const findTimeInSeconds = (startTime) => (new Date() - startTime) / 1000
 
-const convertToHashPromise = (plaintextPass, saltRounds) => {
+const convertToHashPromise = function (plaintextPass, saltRounds = 10) {
+  return new Promise((resolve, reject) => {
     bcrypt.hash(plaintextPass, saltRounds, (err, hash) => {
-      return Promise.resolve(hash)
-      return Promise.reject(error)
+      if (err) {
+        return reject(err)
+      }
+      return resolve(hash)
     })
+  })
 }
 
 module.exports = {

@@ -18,7 +18,11 @@ test('convertToHash converts a plaintextPass to a bcrypt accurate hash', async t
   const pass = "cookies"
   let actualHash = await convertToHashPromise(pass, saltRounds)
   bcrypt.compare(pass, actualHash, (err, res) => {
-    console.log(res)
+    console.log(actualHash)
+    if (err) {
+      console.log(err)
+      t.fail(err)
+    }
     if (res === false) {
       t.fail("the convertToHash function doesn't convert a password to accurate hash")
     }
