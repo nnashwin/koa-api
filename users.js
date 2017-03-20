@@ -14,28 +14,28 @@ const router = new Router({
 
 
 const saveNewUser = async function (ctx) {
-    console.log(ctx.request.body)
-    const jobIds = []
+    let bodyObj = ctx.request.body 
 
-    for (let i = 0; i < (Math.random() * 20); i++) {
-      jobIds.push('jobId')
+    if (typeof bodyObj.username !== 'string' || typeof bodyObj.password !== 'string' || typeof bodyObj.jobIds !== 'object') {
+      return ctx.response.status = 400
     }
 
-    let hash = await convertToHashPromise('cookies')
+    let hash = await convertToHashPromise(bodyObj.password)
 
     var record = new User({
-      username: `user${Math.random() * 100000}`,
-      password: 'secret',
-      jobIds: jobIds 
+      username: bodyObj.username,
+      password: hash,
+      jobIds: bodyObj 
     })
+
     await record.save();
+    ctx.response.status = 200
     return ctx.body = "User Saved"
 }
 
 
 const findAllUsers = async function (ctx) {
   let users = await User.all()
-  //ctx.body = 'Returned all users'
   return users
 }
 
@@ -65,8 +65,7 @@ router.get('/create',
 router.post('/create', 
   setResTimeHeader,
   saveNewUser,
-  async function (ctx) {
-    console.log(ctx.request.body)
+  (ctx) => {
     ctx.response.status = 200
   }
 )
