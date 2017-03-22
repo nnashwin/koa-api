@@ -2,8 +2,7 @@ require('babel-register')
 require('babel-polyfill')
 const bcrypt = require('bcrypt')
 
-import { findTimeInSeconds } from '../helpers.js'
-import { convertToHashPromise,  convertToPass } from '../helpers.js'
+import { findTimeInSeconds, convertToHashPromise,  convertToPass } from '../helpers.js'
 import test from 'ava'
 
 test('findTimeInSeconds returns a number', t => {
