@@ -13,12 +13,16 @@ const router = new Router({
 })
 
 const rejectNonAppJsonReq = (ctx, next) => {
-  ctx.is('application/json') === 'application/json' ? next() : ctx.response.status = 400
+  if (ctx.is('application/json') === false)  {
+    return ctx.response.status = 400
+  }
+  next()
   return ctx.response.status = 200
 }
 
 
 const saveNewUser = async function (ctx, next) {
+  console.log('enters newUser function')
     let bodyObj = ctx.request.body 
 
     if (typeof bodyObj.username !== 'string' || typeof bodyObj.password !== 'string' || typeof bodyObj.jobIds !== 'object') {
@@ -45,7 +49,6 @@ const saveNewUser = async function (ctx, next) {
     }
 }
 
-
 const findAllUsers = async function (ctx) {
   let users = await User.all()
   return users
@@ -67,6 +70,7 @@ const setBaseBody = (ctx, next) => {
 Mongorito.connect('localhost/jobsUsers')
 
 router.get('/create',
+   rejectNonAppJsonReq,
    setResTimeHeader,
    function (ctx, next) {
      return next()
