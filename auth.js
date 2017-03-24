@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken')
 
 const signJWTPromise = (obj, secret) => {
   return new Promise((resolve, reject) => {
-    jwt.sign(obj, secret, (err, token) => {
+    jwt.sign(obj, secret, { algorithm: 'HS256' }, (err, token) => {
       if (err) {
         reject(err)
       }
@@ -10,6 +10,8 @@ const signJWTPromise = (obj, secret) => {
     })
   })
 }
+
+
 
 module.exports = {
   signJWTPromise: signJWTPromise
