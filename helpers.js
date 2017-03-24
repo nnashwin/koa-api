@@ -13,7 +13,16 @@ const convertToHashPromise = (plaintextPass, saltRounds = 10) => {
   })
 }
 
+const setResTimeHeader = async (ctx, next) => {
+  const start = new Date()
+  await next()
+  const sec = findTimeInSeconds(start)
+  ctx.set('X-Response-Time', `${sec} seconds`)
+  return console.log(`${ctx.method} ${ctx.originalUrl} - ${sec}`)
+}
+
 module.exports = {
   findTimeInSeconds: findTimeInSeconds,
-  convertToHashPromise: convertToHashPromise
+  convertToHashPromise: convertToHashPromise,
+  setResTimeHeader: setResTimeHeader
 }

@@ -1,11 +1,10 @@
 const Router = require('koa-router')
 const Mongorito = require('mongorito')
 const bodyParser = require('koa-bodyparser')
-import { findTimeInSeconds, convertToHashPromise } from './helpers'
+import { findTimeInSeconds, convertToHashPromise, setResTimeHeader } from './helpers'
 const Model = Mongorito.Model
 
-const User = Model.extend({
-  collection: 'users'
+const User = Model.extend({ collection: 'users'
 })
 
 const router = new Router({
@@ -20,9 +19,7 @@ const rejectNonAppJsonReq = (ctx, next) => {
   return ctx.response.status = 200
 }
 
-
 const saveNewUser = async function (ctx, next) {
-  console.log('enters newUser function')
     let bodyObj = ctx.request.body 
 
     if (typeof bodyObj.username !== 'string' || typeof bodyObj.password !== 'string' || typeof bodyObj.jobIds !== 'object') {
@@ -52,14 +49,6 @@ const saveNewUser = async function (ctx, next) {
 const findAllUsers = async function (ctx) {
   let users = await User.all()
   return users
-}
-
-const setResTimeHeader = async (ctx, next) => {
-  const start = new Date()
-  await next()
-  const sec = findTimeInSeconds(start)
-  ctx.set('X-Response-Time', `${sec} seconds`)
-  return console.log(`${ctx.method} ${ctx.originalUrl} - ${sec}`)
 }
 
 const setBaseBody = (ctx, next) => {
