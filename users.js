@@ -32,7 +32,6 @@ const saveNewUser = async function (ctx, next) {
       console.log(e)
     }
     
-
     var record = new User({
       username: bodyObj.username,
       password: hash,
