@@ -51,19 +51,11 @@ const findAllUsers = async function (ctx) {
   return users
 }
 
-const setBaseBody = (ctx, next) => {
-  ctx.body = "This is a default, change when you start to implement the front-end"
-  return next()
-}
-
 Mongorito.connect('localhost/jobsUsers')
 
 router.get('/create',
    rejectNonAppJsonReq,
    setResTimeHeader,
-   function (ctx, next) {
-     return next()
-   },
    saveNewUser
 )
 
@@ -78,4 +70,12 @@ router.get('/find',
    findAllUsers
 )
 
+router.get('/login',
+  setResTimeHeader,
+  (ctx, next) => {
+    // compare entered password to recorded password
+    // return token and code 200 if correct
+    return ctx.status = 200
+  }
+)
 exports.router = router
