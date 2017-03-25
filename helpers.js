@@ -18,7 +18,10 @@ const setResTimeHeader = async (ctx, next) => {
   await next()
   const sec = findTimeInSeconds(start)
   ctx.set('X-Response-Time', `${sec} seconds`)
-  return console.log(`${ctx.method} ${ctx.originalUrl} - ${sec}`)
+  console.log(`${ctx.method} ${ctx.originalUrl} - ${sec}`)
+  ctx.response.status = 200
+
+  return ctx.response
 }
 
 module.exports = {
