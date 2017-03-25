@@ -30,3 +30,16 @@ test('test that verifyJWTPromise returns the value from a JWT token', async t =>
     t.fail("the jwt wasn't verified correctly: verifyJWTPromise'")
   }
 })
+
+test('test that verifyJWTPromise throws an error if the secret is wrong', async t => { 
+  let token = jwt.sign({ milk: 'cookies' }, secret)
+
+  try {
+    var returnedObjFromToken = await verifyJWTPromise(token, 'spoiledCookies')
+  } catch (e) {
+    return t.pass('the try catch is throwing an error for the incorrect password')
+  }
+
+  return t.fail('the incorrect password error from the jwt library wasnt thrown properly')
+
+})
