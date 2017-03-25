@@ -11,7 +11,7 @@ const signJWTPromise = (obj, secret) => {
   })
 }
 
-verifyJWTPromise = (token, secret) => {
+const verifyJWTPromise = (token, secret) => {
  return new Promise((resolve, reject) => {
    jwt.verify(token, secret, (err, decoded) => {
      if (err) {
