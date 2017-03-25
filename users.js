@@ -1,22 +1,23 @@
+import { findTimeInSeconds, convertToHashPromise, setResTimeHeader } from './helpers'
+import { signJWTPromise, verifyJWTPromise } from './auth'
+import secret from './secret.js'
 const Router = require('koa-router')
 const Mongorito = require('mongorito')
 const bodyParser = require('koa-bodyparser')
-import { findTimeInSeconds, convertToHashPromise, setResTimeHeader } from './helpers'
+
 const Model = Mongorito.Model
 
-const User = Model.extend({ collection: 'users'
-})
+const User = Model.extend({ collection: 'users' })
 
 const router = new Router({
   prefix: '/users'
 })
 
-const rejectNonAppJsonReq = (ctx, next) => {
+const rejectNonAppJsonReq = async (ctx, next) => {
   if (ctx.is('application/json') === false)  {
     return ctx.response.status = 400
   }
-  next()
-  return ctx.response.status = 200
+  await next()
 }
 
 const saveNewUser = async function (ctx, next) {
@@ -43,30 +44,31 @@ const saveNewUser = async function (ctx, next) {
     } catch (e) {
       console.log(e)
     }
+
+    ctx.jwt = {}
+    ctx.jwt.username = bodyObj.username
+    ctx.jwt.pass = bodyObj.password
+    await next()
 }
 
-const findAllUsers = async function (ctx) {
-  let users = await User.all()
-  return users
+const createJWT = async function (ctx) {
+  try {
+    var jwt = await signJWTPromise(ctx.jwt, secret.secret)
+  } catch (e) {
+    console.log(e)
+  }
+  ctx.response.body = {
+    "jwt": jwt
+  }
 }
 
 Mongorito.connect('localhost/jobsUsers')
 
-router.get('/create',
-   rejectNonAppJsonReq,
-   setResTimeHeader,
-   saveNewUser
-)
-
 router.post('/create', 
   setResTimeHeader,
   rejectNonAppJsonReq,
-  saveNewUser
-)
-
-router.get('/find',
-   setResTimeHeader,
-   findAllUsers
+  saveNewUser,
+  createJWT
 )
 
 router.get('/login',
