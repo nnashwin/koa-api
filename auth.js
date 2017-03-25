@@ -11,8 +11,18 @@ const signJWTPromise = (obj, secret) => {
   })
 }
 
-
+verifyJWTPromise = (token, secret) => {
+ return new Promise((resolve, reject) => {
+   jwt.verify(token, secret, (err, decoded) => {
+     if (err) {
+       reject(err)
+     }
+     resolve(decoded)
+   })
+ })
+}
 
 module.exports = {
-  signJWTPromise: signJWTPromise
+  signJWTPromise: signJWTPromise,
+  verifyJWTPromise: verifyJWTPromise
 }
