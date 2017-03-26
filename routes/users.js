@@ -1,6 +1,6 @@
-import { findTimeInSeconds, convertToHashPromise, setResTimeHeader } from './helpers'
-import { signJWTPromise, verifyJWTPromise } from './auth'
-import secret from './secret.js'
+import { findTimeInSeconds, convertToHashPromise, setResTimeHeader, rejectNonAppJsonReq, buildRejReq, verifyJWT } from '../helpers'
+import { signJWTPromise, verifyJWTPromise } from '../auth'
+import secret from '../secret.js'
 const Router = require('koa-router')
 const Mongorito = require('mongorito')
 const bodyParser = require('koa-bodyparser')
@@ -8,27 +8,6 @@ const bodyParser = require('koa-bodyparser')
 const Model = Mongorito.Model
 
 const User = Model.extend({ collection: 'users' })
-
-const router = new Router({
-  prefix: '/users'
-})
-
-const rejectNonAppJsonReq = async (ctx, next) => {
-  if (ctx.is('application/json') === false)  {
-    return ctx.response.status = 400
-  }
-  await next()
-}
-
-const buildRejReq = (...fields) => async (ctx, next) => {
-  for (let field of fields) {
-    if (ctx.request.body[field] === undefined) {
-      return ctx.response.status = 400
-    }
-  }
-
-  await next()
-}
 
 const rejectImproperSignup = buildRejReq("username", "password")
 const rejectImproperLogin = buildRejReq("username", "password")
@@ -75,20 +54,14 @@ const createJWT = async function (ctx) {
   }
 }
 
-const verifyJWT = async (ctx, next) => {
-  try {
-    var jwt = await verifyJWTPromise(ctx.request.body.jwt, secret.secret)
-  } catch (e) {
-    console.log(e)
-    return ctx.response.status = 401
-  }
-  await next()
-    I AM HERE ON LINE 86
-}
-
 Mongorito.connect('localhost/jobsUsers')
 
-router.post('/create', 
+const users = new Router({
+  prefix: '/users'
+})
+
+
+users.post('/create', 
   setResTimeHeader,
   rejectNonAppJsonReq,
   rejectImproperSignup,
@@ -96,7 +69,7 @@ router.post('/create',
   createJWT
 )
 
-router.get('/login',
+users.get('/login',
   setResTimeHeader,
   (ctx, next) => {
     // compare entered password to recorded password
@@ -105,10 +78,4 @@ router.get('/login',
   }
 )
 
-router.post('/find',
-  setResTimeHeader,
-  rejectNonAppJsonReq,
-  verifyJWT
-)
-
-exports.router = router
+exports.users = users
