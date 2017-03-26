@@ -3,11 +3,13 @@ const Router = require('koa-router')
 const BodyParser = require('koa-bodyparser')
 const app = new Koa()
 
-const router = require('./users').router
+import { users } from './routes/users'
+import { jobs } from './routes/jobs'
 
 app
   .use(BodyParser())
-  .use(router.routes())
+  .use(users.routes())
+  .use(jobs.routes())
 
 
 app.listen(9001)
