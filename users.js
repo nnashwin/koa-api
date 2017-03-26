@@ -75,12 +75,15 @@ const createJWT = async function (ctx) {
   }
 }
 
-const verifyJWT = async (ctx) => {
+const verifyJWT = async (ctx, next) => {
   try {
-    var jwt = await verifyJWTPromise(ctx.jwt, secret.secret)
+    var jwt = await verifyJWTPromise(ctx.request.body.jwt, secret.secret)
   } catch (e) {
     console.log(e)
+    return ctx.response.status = 401
   }
+  await next()
+    I AM HERE ON LINE 86
 }
 
 Mongorito.connect('localhost/jobsUsers')
@@ -100,6 +103,12 @@ router.get('/login',
     // return token and code 200 if correct
     return ctx.status = 200
   }
+)
+
+router.post('/find',
+  setResTimeHeader,
+  rejectNonAppJsonReq,
+  verifyJWT
 )
 
 exports.router = router
