@@ -20,6 +20,19 @@ const rejectNonAppJsonReq = async (ctx, next) => {
   await next()
 }
 
+const buildRejReq = (...fields) => async (ctx, next) => {
+  for (let field of fields) {
+    if (ctx.request.body[field] === undefined) {
+      return ctx.response.status = 400
+    }
+  }
+
+  await next()
+}
+
+const rejectImproperSignup = buildRejReq("username", "password")
+const rejectImproperLogin = buildRejReq("username", "password")
+
 const saveNewUser = async function (ctx, next) {
     let bodyObj = ctx.request.body 
 
@@ -62,11 +75,20 @@ const createJWT = async function (ctx) {
   }
 }
 
+const verifyJWT = async (ctx) => {
+  try {
+    var jwt = await verifyJWTPromise(ctx.jwt, secret.secret)
+  } catch (e) {
+    console.log(e)
+  }
+}
+
 Mongorito.connect('localhost/jobsUsers')
 
 router.post('/create', 
   setResTimeHeader,
   rejectNonAppJsonReq,
+  rejectImproperSignup,
   saveNewUser,
   createJWT
 )
@@ -79,4 +101,5 @@ router.get('/login',
     return ctx.status = 200
   }
 )
+
 exports.router = router
