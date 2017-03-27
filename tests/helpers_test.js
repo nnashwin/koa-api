@@ -31,11 +31,25 @@ test('checkPassWithHashPromise returns true when the password is real', async t 
   const pass = "cookies"
   var hash = bcrypt.hashSync(pass, saltRounds)
   try {
-    var isPasswordSame = checkPassWithHashPromise(pass, hash)
+    var isPasswordSame = await checkPassWithHashPromise(pass, hash)
   } catch (e) {
     t.fail(e)
   }
   if (isPasswordSame === false) {
     t.fail('the checkPassWithHashPromise did not return true when the pass was the same')
+  }
+})
+
+test('checkPassWithHashPromise returns false when the password is different', async t => {
+  const saltRounds = 10
+  const pass = "cookies"
+  var hash = bcrypt.hashSync(pass, saltRounds)
+  try {
+    var isPassSame = await checkPassWithHashPromise('milk', hash)
+  } catch (e) {
+    t.fail(e)
+  }
+  if (isPassSame !== false) {
+    t.fail('the checkPassWithHashPromise did not return false when the pass was not the same')
   }
 })
