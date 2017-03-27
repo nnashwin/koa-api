@@ -19,6 +19,16 @@ const saveNewUser = async function (ctx, next) {
       return ctx.response.status = 400
     }
 
+    let checkUser = await User.findOne({ username: bodyObj.username })
+    if (typeof checkUser !== 'undefined') {
+      ctx.response.body = {
+        msg: 'this username already exists',
+        status: 401
+      }
+      return ctx.response.status = 401
+    }
+    console.log(typeof checkUser === 'undefined')
+
     try {
       var hash = await convertToHashPromise(bodyObj.password)
     } catch (e) {
@@ -69,12 +79,14 @@ users.post('/create',
   createJWT
 )
 
-users.get('/login',
+users.post('/login',
   setResTimeHeader,
-  (ctx, next) => {
-    // compare entered password to recorded password
-    // return token and code 200 if correct
-    return ctx.status = 200
+  rejectNonAppJsonReq,
+  rejectImproperLogin,
+  async (ctx, next) => {
+    let bodyObj = ctx.request.body 
+    let user = await User.findOne({ username: bodyObj.username })
+    console.log(user)
   }
 )
 
