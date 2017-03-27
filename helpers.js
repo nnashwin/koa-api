@@ -1,8 +1,10 @@
+require('babel-register')
+require('babel-polyfill')
 import { verifyJWTPromise } from './auth'
 import secret from './secret'
 
 const bcrypt = require('bcrypt')
-const findTimeInSeconds = (startTime) => (new Date() - startTime) / 1000
+
 const convertToHashPromise = (plaintextPass, saltRounds = 10) => {
   return new Promise((resolve, reject) => {
     bcrypt.hash(plaintextPass, saltRounds, (err, hash) => {
@@ -13,6 +15,20 @@ const convertToHashPromise = (plaintextPass, saltRounds = 10) => {
     })
   })
 }
+
+const checkPassWithHashPromise = (plaintextPass, hash) => {
+  return new Promise((resolve, reject) => {
+    bcrypt.compare(plaintextPass, hash, (err, res) => {
+      if (err) {
+        reject(err)
+      }
+      resolve(res)
+    })
+  })
+}
+
+
+const findTimeInSeconds = (startTime) => (new Date() - startTime) / 1000
 
 const setResTimeHeader = async (ctx, next) => {
   const start = new Date()
@@ -55,9 +71,10 @@ const verifyJWT = async (ctx, next) => {
 }
 
 module.exports = {
-  findTimeInSeconds: findTimeInSeconds,
-  convertToHashPromise: convertToHashPromise,
-  setResTimeHeader: setResTimeHeader,
+  findTimeInSeconds,
+  convertToHashPromise,
+  checkPassWithHashPromise,
+  setResTimeHeader,
   rejectNonAppJsonReq,
   buildRejReq,
   verifyJWT
