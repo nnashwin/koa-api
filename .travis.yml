@@ -5,6 +5,7 @@ branches:
 node_js:
 - node
 before_script:
+  - tar xzvf secrets.tar
   - ls
 script: npm test
 before_install:
