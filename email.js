@@ -1,7 +1,7 @@
 require('babel-register')
 require('babel-polyfill')
 const email = require("emailjs")
-const emailCred = require('./email-creds.json')
+const emailCred = require('./secrets/email-creds.json')
 
 const server = email.server.connect({
   user: emailCred.user,

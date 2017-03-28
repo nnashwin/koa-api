@@ -1,6 +1,6 @@
 import { findTimeInSeconds, convertToHashPromise, setResTimeHeader, rejectNonAppJsonReq, buildRejReq, verifyJWT } from '../helpers'
 import { signJWTPromise, verifyJWTPromise } from '../auth'
-import secret from '../secret.js'
+import secret from '../secrets/secret.js'
 const Router = require('koa-router')
 const Mongorito = require('mongorito')
 const bodyParser = require('koa-bodyparser')

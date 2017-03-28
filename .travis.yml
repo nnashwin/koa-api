@@ -4,6 +4,8 @@ branches:
   - master
 node_js:
 - node
+before_script:
+  - ls
 script: npm test
 before_install:
 - openssl aes-256-cbc -K $encrypted_15d4b2a35eaf_key -iv $encrypted_15d4b2a35eaf_iv

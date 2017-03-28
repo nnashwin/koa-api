@@ -1,7 +1,7 @@
 require('babel-register')
 require('babel-polyfill')
 import { verifyJWTPromise } from './auth'
-import secret from './secret'
+import secret from './secrets/secret'
 
 const bcrypt = require('bcrypt')
 
