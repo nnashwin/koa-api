@@ -19,6 +19,7 @@ const saveNewUser = async function (ctx, next) {
       return ctx.response.status = 400
     }
 
+    // Check to see if the username already exists
     let checkUser = await User.findOne({ username: bodyObj.username })
     if (typeof checkUser !== 'undefined') {
       ctx.response.body = {
@@ -27,7 +28,6 @@ const saveNewUser = async function (ctx, next) {
       }
       return ctx.response.status = 401
     }
-    console.log(typeof checkUser === 'undefined')
 
     try {
       var hash = await convertToHashPromise(bodyObj.password)
@@ -86,7 +86,6 @@ users.post('/login',
   async (ctx, next) => {
     let bodyObj = ctx.request.body 
     let user = await User.findOne({ username: bodyObj.username })
-    console.log(user)
   }
 )
 
