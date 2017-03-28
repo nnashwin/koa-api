@@ -29,7 +29,7 @@
     "require": "babel-register"
   },
   "scripts": {
-    "test": "ava tests",
+    "test": "./node_modules/ava/cli.js tests",
     "start-dev": "./node_modules/nodemon/bin/nodemon.js hook.js"
   },
   "repository": {
