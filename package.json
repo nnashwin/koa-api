@@ -22,7 +22,11 @@
     "ava": "^0.18.2",
     "babel-plugin-transform-async-to-generator": "^6.22.0",
     "babel-preset-latest": "^6.24.0",
+    "babel-register": "^6.24.0",
     "nodemon": "^1.11.0"
+  },
+  "ava": {
+    "require": "babel-register"
   },
   "scripts": {
     "test": "ava tests",
