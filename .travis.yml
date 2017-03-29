@@ -7,6 +7,14 @@ node_js:
 before_script:
   - tar xzvf secrets.tar
 script: npm test
+env:
+ - CXX=g++-4.8
+addons:
+ apt:
+  sources:
+   - ubuntu-toolchain-r-test
+  packages:
+   - g++-4.8
 before_install:
 - openssl aes-256-cbc -K $encrypted_15d4b2a35eaf_key -iv $encrypted_15d4b2a35eaf_iv
   -in secrets.tar.enc -out secrets.tar -d
