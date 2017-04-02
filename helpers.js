@@ -16,7 +16,7 @@ const convertToHashPromise = (plaintextPass, saltRounds = 10) => {
   })
 }
 
-const checkPassWithHashPromise = (plaintextPass, hash) => {
+const checkHashPassPromise = (plaintextPass, hash) => {
   return new Promise((resolve, reject) => {
     bcrypt.compare(plaintextPass, hash, (err, res) => {
       if (err) {
@@ -73,7 +73,7 @@ const verifyJWT = async (ctx, next) => {
 module.exports = {
   findTimeInSeconds,
   convertToHashPromise,
-  checkPassWithHashPromise,
+  checkHashPassPromise,
   setResTimeHeader,
   rejectNonAppJsonReq,
   buildRejReq,
