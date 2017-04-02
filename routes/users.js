@@ -1,4 +1,4 @@
-import { findTimeInSeconds, convertToHashPromise, setResTimeHeader, rejectNonAppJsonReq, buildRejReq, verifyJWT } from '../helpers'
+import { findTimeInSeconds, convertToHashPromise, setResTimeHeader, rejectNonAppJsonReq, buildRejReq, verifyJWT, checkHashPassPromise } from '../helpers'
 import { signJWTPromise, verifyJWTPromise } from '../auth'
 import secret from '../secrets/secret.js'
 const Router = require('koa-router')
@@ -84,9 +84,31 @@ users.post('/login',
   rejectNonAppJsonReq,
   rejectImproperLogin,
   async (ctx, next) => {
-    let bodyObj = ctx.request.body 
-    let user = await User.findOne({ username: bodyObj.username })
+    let bodyObj = ctx.request.body;
+
+    try {
+      var user = await User.findOne({ username: bodyObj.username });
+    } catch(e) {
+      console.log(e);
+    }
+
+    try {
+      var doesPassMatchHash = await checkHashPassPromise(bodyObj.password, user.attributes.password);
+    } catch(e) {
+      console.log(e);
+    }
+
+    if (doesPassMatchHash === false) {
+      ctx.response.body = {
+          msg: 'your login information is incorrect',
+          status: 401
+      };
+
+      return ctx.response.status = 401;
+    }
+
+    next();
   }
 )
 
-exports.users = users
+exports.users = users;
