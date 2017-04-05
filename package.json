@@ -13,7 +13,9 @@
     "koa": "^2.0.1",
     "koa-bodyparser": "^4.1.0",
     "koa-router": "^7.0.1",
-    "mongorito": "^2.2.0"
+    "mongorito": "^2.2.0",
+    "node-schedule": "^1.2.1",
+    "watch": "^1.0.2"
   },
   "devDependencies": {
     "ava": "^0.18.2",
@@ -33,7 +35,8 @@
   },
   "scripts": {
     "test": "./node_modules/ava/cli.js tests",
-    "start-dev": "./node_modules/nodemon/bin/nodemon.js hook.js"
+    "start-dev": "./node_modules/nodemon/bin/nodemon.js hook.js",
+	"lint": "eslint ."
   },
   "repository": {
     "type": "git",

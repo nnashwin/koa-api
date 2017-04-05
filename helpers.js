@@ -1,34 +1,38 @@
-require('babel-register')
-require('babel-polyfill')
-import { verifyJWTPromise } from './auth'
-import secret from './secrets/secret'
+import { verifyJWTPromise } from './auth';
+import secret from './secrets/secret';
 
-const bcrypt = require('bcrypt')
+require('babel-register');
+
+require('babel-polyfill');
+
+const bcrypt = require('bcrypt');
 
 const convertToHashPromise = (plaintextPass, saltRounds = 10) => {
-  return new Promise((resolve, reject) => {
-    bcrypt.hash(plaintextPass, saltRounds, (err, hash) => {
-      if (err) {
-        return reject(err)
-      }
-      return resolve(hash)
-    })
-  })
-}
+	return new Promise((resolve, reject) => {
+		bcrypt.hash(plaintextPass, saltRounds, (err, hash) => {
+			if (err) {
+				return reject(err);
+			}
+			return resolve(hash);
+		});
+	});
+};
 
 const checkHashPassPromise = (plaintextPass, hash) => {
-  return new Promise((resolve, reject) => {
-    bcrypt.compare(plaintextPass, hash, (err, res) => {
-      if (err) {
-        reject(err)
-      }
-      resolve(res)
-    })
-  })
-}
+	return new Promise((resolve, reject) => {
+		bcrypt.compare(plaintextPass, hash, (err, res) => {
+			if (err) {
+				reject(err);
+			}
+			resolve(res);
+		});
+	});
+};
 
 
-const findTimeInSeconds = (startTime) => (new Date() - startTime) / 1000
+const findTimeInSeconds = (startTime) => {
+	return (new Date() - startTime) / 1000;
+};
 
 const setResTimeHeader = async (ctx, next) => {
   const start = new Date()
